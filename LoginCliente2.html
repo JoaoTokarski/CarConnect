@@ -3,264 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarConnect - Acesso Geral (Corrigido)</title>
+    <title>CarConnect - Sistema de Cliente</title>
     <style>
-        /* Estilos básicos para simular o design e esconder as telas */
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #333; /* Fundo escuro como na imagem */
-            color: white;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
-
-        .screen {
-            /* Estilo da caixa da tela, similar ao seu layout */
-            background-color: #1a237e; /* Azul escuro */
-            border: 1px solid #3f51b5;
-            width: 350px;
+            align-items: center;
             padding: 20px;
-            margin: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            /* Importante: oculta todas as telas por padrão */
-            display: none; 
-            position: relative; /* Para posicionar a seta */
         }
-
-        /* Estilos para os componentes internos */
-        h2 {
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .header {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            padding: 25px 20px;
             text-align: center;
-            color: #bbdefb; /* Azul claro */
-            margin-bottom: 20px;
         }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="date"] {
-            width: 95%;
-            padding: 10px;
-            margin-bottom: 10px;
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 30px 25px;
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        h2 {
+            color: #1a2a6c;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        p {
+            color: #555;
+            margin-bottom: 25px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 14px;
             border: none;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: #f0f4c3; /* Cor clara para input */
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
             color: #333;
         }
-
-        button {
+        
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            border-color: #1a2a6c;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(26, 42, 108, 0.2);
+        }
+        
+        .back-btn {
+            background: none;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .btn-primary {
-            background-color: #4CAF50; /* Botão verde (Entrar/Login) */
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #2196F3; /* Botão azul (Cadastro/Cliente/Vendedor) */
-            color: white;
-        }
-
-        .logo {
-            text-align: center;
+            color: #1a2a6c;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
             margin-bottom: 15px;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #e3f2fd;
-        }
-
-        /* Estilo para a seta de voltar */
-        .back-arrow {
-            font-size: 1.5em;
             cursor: pointer;
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            color: white;
-            z-index: 10;
+            padding: 5px 0;
         }
-
-        .screen-header {
-            padding-top: 30px; /* Espaço para a seta */
-            margin-bottom: 15px;
-            border-bottom: 1px solid #3f51b5;
+        
+        .back-btn:hover {
+            text-decoration: underline;
         }
-
-        /* Estilo para o modal de erro (simulação) */
-        .error-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #f44336;
-            color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            display: none; /* Escondido por padrão */
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             text-align: center;
-            width: 250px;
+            display: none;
         }
-
-        .error-modal button {
-            background-color: white;
-            color: #f44336;
-            width: 80px;
-            margin-top: 10px;
+        
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
         }
     </style>
 </head>
 <body>
-
-    <div id="generalChoiceScreen" class="screen">
-        <div class="screen-header">
+    <div class="container">
+        <div class="header">
             <div class="logo">CarConnect</div>
+            <div class="subtitle">RECORDS LIBRE</div>
         </div>
-        <h2>Tela de escolha</h2>
-        <button class="btn-secondary" onclick="alert('Funcionalidade do Vendedor não implementada.');">Vendedor</button>
-        <button class="btn-secondary" onclick="navigateTo('clientChoiceScreen')">Cliente</button>
-    </div>
-
-    <div id="clientChoiceScreen" class="screen">
-        <span class="back-arrow" onclick="navigateTo('generalChoiceScreen')">←</span>
-        <div class="screen-header">
-            <div class="logo">CarConnect Cliente</div>
+        
+        <div class="content">
+            <!-- Tela de escolha inicial -->
+            <div id="screen-home" class="screen active">
+                <h2>Bem-vindo ao CarConnect</h2>
+                <p>Escolha uma opção para continuar</p>
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="showScreen('screen-login-choice')">Cliente</button>
+                    <button class="btn-secondary">Administrador</button>
+                </div>
+            </div>
+            
+            <!-- Tela de escolha de login cliente -->
+            <div id="screen-login-choice" class="screen">
+                <button class="back-btn" onclick="showScreen('screen-home')">
+                    ← Voltar
+                </button>
+                <h2>Área do Cliente</h2>
+                <p>Escolha como deseja acessar sua conta</p>
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="showScreen('screen-login')">Fazer Login</button>
+                    <button class="btn-secondary" onclick="showScreen('screen-register')">Fazer Cadastro</button>
+                </div>
+            </div>
+            
+            <!-- Tela de login cliente -->
+            <div id="screen-login" class="screen">
+                <button class="back-btn" onclick="showScreen('screen-login-choice')">
+                    ← Voltar
+                </button>
+                <h2>Login do Cliente</h2>
+                <p>Informe seus dados para acessar sua conta</p>
+                
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" placeholder="seu@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" placeholder="Sua senha">
+                </div>
+                
+                <button class="btn-primary" onclick="login()">Entrar</button>
+            </div>
+            
+            <!-- Tela de cadastro cliente -->
+            <div id="screen-register" class="screen">
+                <button class="back-btn" onclick="showScreen('screen-login-choice')">
+                    ← Voltar
+                </button>
+                <h2>Cadastro do Cliente</h2>
+                <p>Preencha os dados para criar sua conta</p>
+                
+                <div class="form-group">
+                    <label for="register-name">Nome Completo</label>
+                    <input type="text" id="register-name" placeholder="Seu nome completo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-email">E-mail</label>
+                    <input type="email" id="register-email" placeholder="seu@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-password">Senha</label>
+                    <input type="password" id="register-password" placeholder="Crie uma senha">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-confirm">Confirmar Senha</label>
+                    <input type="password" id="register-confirm" placeholder="Digite a senha novamente">
+                </div>
+                
+                <button class="btn-primary" onclick="register()">Cadastrar</button>
+            </div>
+            
+            <!-- Tela após login bem-sucedido -->
+            <div id="screen-dashboard" class="screen">
+                <h2>Bem-vindo ao CarConnect!</h2>
+                <p>Login realizado com sucesso.</p>
+                <div class="success-message show">
+                    Você foi autenticado com sucesso!
+                </div>
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="showScreen('screen-home')">Sair</button>
+                </div>
+            </div>
         </div>
-        <h2>Tela de escolha de login cliente</h2>
-        <button class="btn-primary" onclick="navigateTo('loginScreen')">Entrar</button>
-        <button class="btn-secondary" onclick="navigateTo('cadastroScreen')">Cadastre-se</button>
-    </div>
-
-    <div id="loginScreen" class="screen">
-        <span class="back-arrow" onclick="navigateTo('clientChoiceScreen')">←</span>
-        <div class="screen-header">
-            <div class="logo">CarConnect Cliente</div>
-        </div>
-        <h2>Tela de Login Cliente</h2>
-        <label for="loginEmail">Email:</label>
-        <input type="text" id="loginEmail" placeholder="seu@email.com">
-        <label for="loginSenha">Senha:</label>
-        <input type="password" id="loginSenha" placeholder="********">
-        <button class="btn-primary" onclick="handleLogin()">ENTRAR</button>
-        <a href="#" style="display: block; text-align: center; margin-top: 10px; color: #bbdefb; font-size: 0.9em;" onclick="event.preventDefault(); navigateTo('cadastroScreen')">Criar Conta</a>
-    </div>
-
-    <div id="cadastroScreen" class="screen">
-        <span class="back-arrow" onclick="navigateTo('clientChoiceScreen')">←</span>
-        <div class="screen-header">
-            <div class="logo">CarConnect Cliente</div>
-        </div>
-        <h2>Tela de Cadastro Cliente</h2>
-        <label for="nomeCompleto">Nome Completo:</label>
-        <input type="text" id="nomeCompleto" placeholder="Nome Sobrenome">
-        <label for="dataNascimento">Data de Nascimento:</label>
-        <input type="date" id="dataNascimento">
-        <label for="cadastroEmail">Email:</label>
-        <input type="text" id="cadastroEmail" placeholder="seu@email.com">
-        <label for="cadastroSenha">Senha:</label>
-        <input type="password" id="cadastroSenha" placeholder="********">
-        <button class="btn-primary" onclick="handleCadastro()">Criar</button>
-    </div>
-
-    <div id="errorLoginModal" class="error-modal">
-        <h3>Erro de Login</h3>
-        <p>Falha ao Acessar o site</p>
-        <button onclick="closeModal('errorLoginModal')">Fechar</button>
-    </div>
-
-    <div id="errorCadastroModal" class="error-modal">
-        <h3>Erro de Cadastro</h3>
-        <p>Falha ao se cadastrar no site</p>
-        <button onclick="closeModal('errorCadastroModal')">Fechar</button>
     </div>
 
     <script>
-        // Função principal para navegar entre as telas.
-        // É responsável pelo direcionamento.
-        function navigateTo(screenId) {
-            // 1. Esconde todas as telas
+        // Função para mostrar uma tela específica
+        function showScreen(screenId) {
+            // Esconde todas as telas
             const screens = document.querySelectorAll('.screen');
             screens.forEach(screen => {
-                screen.style.display = 'none';
+                screen.classList.remove('active');
             });
-
-            // 2. Mostra a tela desejada
-            const targetScreen = document.getElementById(screenId);
-            if (targetScreen) {
-                targetScreen.style.display = 'block';
+            
+            // Mostra a tela solicitada
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        // Função para simular o login
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Validação básica
+            if (!email || !password) {
+                alert('Por favor, preencha todos os campos.');
+                return;
             }
+            
+            // Simulação de autenticação bem-sucedida
+            showScreen('screen-dashboard');
         }
-
-        // Simula o processo de Login
-        function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const senha = document.getElementById('loginSenha').value;
-
-            // Simulação de erro: se algum campo estiver vazio.
-            if (email.trim() === '' || senha.trim() === '') {
-                showModal('errorLoginModal', 'Falha ao Acessar o site');
-            } else {
-                // Simulação de Sucesso
-                document.getElementById('loginEmail').value = '';
-                document.getElementById('loginSenha').value = '';
-                alert('Login (Simulado) Bem-sucedido! Redirecionando...');
+        
+        // Função para simular o cadastro
+        function register() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            
+            // Validação básica
+            if (!name || !email || !password || !confirm) {
+                alert('Por favor, preencha todos os campos.');
+                return;
             }
-        }
-
-        // Simula o processo de Cadastro
-        function handleCadastro() {
-            const nome = document.getElementById('nomeCompleto').value;
-            const email = document.getElementById('cadastroEmail').value;
-            const senha = document.getElementById('cadastroSenha').value;
-
-            // Simulação de erro: se algum campo estiver vazio.
-            if (nome.trim() === '' || email.trim() === '' || senha.trim() === '') {
-                showModal('errorCadastroModal', 'Falha ao se cadastrar no site');
-            } else {
-                // Simulação de Sucesso:
-                alert('Cadastro (Simulado) Bem-sucedido! Volte para a tela de Login para entrar.');
-                
-                // Limpa os campos
-                document.getElementById('nomeCompleto').value = '';
-                document.getElementById('dataNascimento').value = '';
-                document.getElementById('cadastroEmail').value = '';
-                document.getElementById('cadastroSenha').value = '';
-                
-                // Redirecionamento correto após o cadastro bem-sucedido: Volta para o LOGIN
-                navigateTo('loginScreen'); 
+            
+            if (password !== confirm) {
+                alert('As senhas não coincidem.');
+                return;
             }
+            
+            // Simulação de cadastro bem-sucedido
+            alert('Cadastro realizado com sucesso! Faça login para continuar.');
+            showScreen('screen-login');
         }
-
-        // Funções para manipular os modais de erro
-        function showModal(modalId, message) {
-            const modal = document.getElementById(modalId);
-            const p = modal.querySelector('p');
-            if (p) p.textContent = message;
-            modal.style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Inicializa a aplicação mostrando a primeira tela: A escolha GERAL
-        document.addEventListener('DOMContentLoaded', () => {
-            navigateTo('generalChoiceScreen');
-        });
     </script>
-
 </body>
 </html>
