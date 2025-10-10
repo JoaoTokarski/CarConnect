@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarConnect - Área do Cliente (Corrigido)</title>
+    <title>CarConnect - Acesso Geral (Corrigido)</title>
     <style>
         /* Estilos básicos para simular o design e esconder as telas */
         body {
@@ -64,12 +64,12 @@
         }
 
         .btn-primary {
-            background-color: #4CAF50; /* Botão verde */
+            background-color: #4CAF50; /* Botão verde (Entrar/Login) */
             color: white;
         }
 
         .btn-secondary {
-            background-color: #2196F3; /* Botão azul */
+            background-color: #2196F3; /* Botão azul (Cadastro/Cliente/Vendedor) */
             color: white;
         }
 
@@ -125,7 +125,17 @@
 </head>
 <body>
 
-    <div id="choiceScreen" class="screen">
+    <div id="generalChoiceScreen" class="screen">
+        <div class="screen-header">
+            <div class="logo">CarConnect</div>
+        </div>
+        <h2>Tela de escolha</h2>
+        <button class="btn-secondary" onclick="alert('Funcionalidade do Vendedor não implementada.');">Vendedor</button>
+        <button class="btn-secondary" onclick="navigateTo('clientChoiceScreen')">Cliente</button>
+    </div>
+
+    <div id="clientChoiceScreen" class="screen">
+        <span class="back-arrow" onclick="navigateTo('generalChoiceScreen')">←</span>
         <div class="screen-header">
             <div class="logo">CarConnect Cliente</div>
         </div>
@@ -135,7 +145,7 @@
     </div>
 
     <div id="loginScreen" class="screen">
-        <span class="back-arrow" onclick="navigateTo('choiceScreen')">←</span>
+        <span class="back-arrow" onclick="navigateTo('clientChoiceScreen')">←</span>
         <div class="screen-header">
             <div class="logo">CarConnect Cliente</div>
         </div>
@@ -149,7 +159,7 @@
     </div>
 
     <div id="cadastroScreen" class="screen">
-        <span class="back-arrow" onclick="navigateTo('choiceScreen')">←</span>
+        <span class="back-arrow" onclick="navigateTo('clientChoiceScreen')">←</span>
         <div class="screen-header">
             <div class="logo">CarConnect Cliente</div>
         </div>
@@ -199,15 +209,14 @@
             const email = document.getElementById('loginEmail').value;
             const senha = document.getElementById('loginSenha').value;
 
-            // Se algum campo estiver vazio, simula o erro de login
+            // Simulação de erro: se algum campo estiver vazio.
             if (email.trim() === '' || senha.trim() === '') {
                 showModal('errorLoginModal', 'Falha ao Acessar o site');
             } else {
-                // Simulação de Sucesso: Limpa os campos e dá um alerta
+                // Simulação de Sucesso
                 document.getElementById('loginEmail').value = '';
                 document.getElementById('loginSenha').value = '';
                 alert('Login (Simulado) Bem-sucedido! Redirecionando...');
-                // Em um projeto real, aqui você redirecionaria para o dashboard.
             }
         }
 
@@ -217,13 +226,14 @@
             const email = document.getElementById('cadastroEmail').value;
             const senha = document.getElementById('cadastroSenha').value;
 
-            // Se algum campo estiver vazio, simula o erro de cadastro
+            // Simulação de erro: se algum campo estiver vazio.
             if (nome.trim() === '' || email.trim() === '' || senha.trim() === '') {
                 showModal('errorCadastroModal', 'Falha ao se cadastrar no site');
             } else {
                 // Simulação de Sucesso:
                 alert('Cadastro (Simulado) Bem-sucedido! Volte para a tela de Login para entrar.');
-                // Limpa os campos após o cadastro
+                
+                // Limpa os campos
                 document.getElementById('nomeCompleto').value = '';
                 document.getElementById('dataNascimento').value = '';
                 document.getElementById('cadastroEmail').value = '';
@@ -246,9 +256,9 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // Inicializa a aplicação mostrando a primeira tela
+        // Inicializa a aplicação mostrando a primeira tela: A escolha GERAL
         document.addEventListener('DOMContentLoaded', () => {
-            navigateTo('choiceScreen');
+            navigateTo('generalChoiceScreen');
         });
     </script>
 
