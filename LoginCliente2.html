@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarConnect - Área do Cliente</title>
+    <style>
+        /* Estilos básicos para simular o design e esconder as telas */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #333; /* Fundo escuro como na imagem */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .screen {
+            /* Estilo da caixa da tela, similar ao seu layout */
+            background-color: #1a237e; /* Azul escuro */
+            border: 1px solid #3f51b5;
+            width: 350px;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Oculta as telas por padrão. O JS mostrará a tela inicial. */
+        .screen {
+            display: none;
+        }
+
+        /* Estilos para os componentes internos */
+        h2 {
+            text-align: center;
+            color: #bbdefb; /* Azul claro */
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="date"] {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #f0f4c3; /* Cor clara para input */
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50; /* Botão verde */
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #2196F3; /* Botão azul */
+            color: white;
+        }
+
+        .btn-back {
+            background-color: #f44336; /* Botão vermelho para voltar */
+            color: white;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e3f2fd;
+        }
+
+        /* Estilo para a seta de voltar, simulando o ícone */
+        .back-arrow {
+            font-size: 1.5em;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .screen-header {
+            position: relative;
+            padding-top: 20px; /* Espaço para a seta */
+            margin-bottom: 15px;
+            border-bottom: 1px solid #3f51b5;
+        }
+
+        /* Estilo para o modal de erro (simulação) */
+        .error-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #f44336;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: none; /* Escondido por padrão */
+            text-align: center;
+        }
+
+        .error-modal button {
+            background-color: white;
+            color: #f44336;
+            width: 80px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="choiceScreen" class="screen">
+        <div class="screen-header">
+            <div class="logo">CarConnect Cliente</div>
+        </div>
+        <h2>Tela de escolha de login cliente</h2>
+        <button class="btn-primary" onclick="navigateTo('loginScreen')">Entrar</button>
+        <button class="btn-secondary" onclick="navigateTo('cadastroScreen')">Cadastre-se</button>
+    </div>
+
+    <div id="loginScreen" class="screen">
+        <div class="screen-header">
+            <span class="back-arrow" onclick="navigateTo('choiceScreen')">←</span>
+            <div class="logo">CarConnect Cliente</div>
+        </div>
+        <h2>Tela de Login Cliente</h2>
+        <label for="loginEmail">Email:</label>
+        <input type="text" id="loginEmail" placeholder="seu@email.com">
+        <label for="loginSenha">Senha:</label>
+        <input type="password" id="loginSenha" placeholder="********">
+        <button class="btn-primary" onclick="handleLogin()">ENTRAR</button>
+        <a href="#" style="display: block; text-align: center; margin-top: 10px; color: #bbdefb;" onclick="navigateTo('cadastroScreen')">Criar Conta</a>
+    </div>
+
+    <div id="cadastroScreen" class="screen">
+        <div class="screen-header">
+            <span class="back-arrow" onclick="navigateTo('choiceScreen')">←</span>
+            <div class="logo">CarConnect Cliente</div>
+        </div>
+        <h2>Tela de Cadastro Cliente</h2>
+        <label for="nomeCompleto">Nome Completo:</label>
+        <input type="text" id="nomeCompleto" placeholder="Nome Sobrenome">
+        <label for="dataNascimento">Data de Nascimento:</label>
+        <input type="date" id="dataNascimento">
+        <label for="cadastroEmail">Email:</label>
+        <input type="text" id="cadastroEmail" placeholder="seu@email.com">
+        <label for="cadastroSenha">Senha:</label>
+        <input type="password" id="cadastroSenha" placeholder="********">
+        <button class="btn-primary" onclick="handleCadastro()">Criar</button>
+    </div>
+
+    <div id="errorLoginModal" class="error-modal">
+        <h3>Erro de Login</h3>
+        <p>Falha ao Acessar o site</p>
+        <button onclick="closeModal('errorLoginModal')">Fechar</button>
+    </div>
+
+    <div id="errorCadastroModal" class="error-modal">
+        <h3>Erro de Cadastro</h3>
+        <p>Falha ao se cadastrar no site</p>
+        <button onclick="closeModal('errorCadastroModal')">Fechar</button>
+    </div>
+
+    <script>
+        // Função principal para navegar entre as telas
+        function navigateTo(screenId) {
+            // 1. Esconde todas as telas
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => {
+                screen.style.display = 'none';
+            });
+
+            // 2. Mostra a tela desejada
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) {
+                targetScreen.style.display = 'block';
+            }
+        }
+
+        // Funções para simular a lógica de login e cadastro
+        function handleLogin() {
+            // Lógica de simulação: se o campo de email estiver vazio, mostra o erro
+            const email = document.getElementById('loginEmail').value;
+            if (email.trim() === '') {
+                // Simula a Falha no Login
+                showModal('errorLoginModal');
+            } else {
+                // Em um cenário real, você faria uma requisição para o servidor aqui.
+                alert('Login (Simulado) Bem-sucedido! Redirecionando para a área logada...');
+                // Você pode adicionar um redirecionamento real aqui, ex: window.location.href = 'dashboard.html';
+            }
+        }
+
+        function handleCadastro() {
+            // Lógica de simulação: se o campo de nome estiver vazio, mostra o erro
+            const nome = document.getElementById('nomeCompleto').value;
+            if (nome.trim() === '') {
+                // Simula a Falha no Cadastro
+                showModal('errorCadastroModal');
+            } else {
+                // Em um cenário real, você faria uma requisição para o servidor aqui.
+                alert('Cadastro (Simulado) Bem-sucedido! Redirecionando para a tela de Login.');
+                navigateTo('loginScreen'); // Volta para o login após o sucesso simulado
+            }
+        }
+
+        // Funções para manipular os modais de erro
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Inicializa a aplicação mostrando a primeira tela
+        document.addEventListener('DOMContentLoaded', () => {
+            navigateTo('choiceScreen');
+        });
+    </script>
+
+</body>
+</html>
