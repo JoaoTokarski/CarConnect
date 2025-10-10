@@ -1,70 +1,543 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarConnect - Login do Cliente</title>
-    <link href="style.css" rel="stylesheet">
+    <title>CarConnect - Acesso</title>
+    <style>
+        /* ------------------------------------------------ */
+        /* CSS GERAL E TELA INICIAL (BASEADO NA ÚLTIMA IMAGEM) */
+        /* ------------------------------------------------ */
+        
+        :root {
+            --dark-blue-bg: #1a237e; /* Fundo principal */
+            --dark-blue-header: #293a4a; /* Azul marinho para cabeçalhos */
+            --dark-gray-screen: #2f333a; /* Fundo das telas de login/cadastro */
+            --primary-action-color: #5865f2; /* Azul dos botões de ação */
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--dark-blue-bg); 
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden; /* Previne barra de rolagem horizontal */
+        }
 
-    <link rel="icon" type="image/png" href="CarConnectlogo.png">
+        /* Barra Lateral de Detalhe (Direita) */
+        .sidebar-right {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 20px; 
+            background-color: #303f9f; 
+        }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="loginVendedor.css" rel="stylesheet">
+        /* ------------------------------------------------ */
+        /* TELA DE ESCOLHA INICIAL (Vendedor/Cliente) */
+        /* ------------------------------------------------ */
+        .initial-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+            /* Filtro para garantir que, se for um ícone escuro, fique branco no fundo azul */
+            filter: invert(100%); 
+        }
+
+        .logo-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .logo-subtitle {
+            font-size: 16px;
+            margin-top: -5px;
+            margin-bottom: 50px;
+            opacity: 0.8;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto;
+        }
+
+        .choice-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .choice-button.vendedor {
+            background-color: white;
+            color: var(--dark-blue-bg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .choice-button.vendedor:hover {
+            background-color: #e0e0e0;
+        }
+
+        .choice-button.cliente {
+            background-color: #3f51b5; 
+            color: white;
+        }
+
+        .choice-button.cliente:hover {
+            background-color: #303f9f;
+        }
+
+        /* ------------------------------------------------ */
+        /* CSS PARA AS TELAS DE AUTENTICAÇÃO DO VENDEDOR */
+        /* ------------------------------------------------ */
+        .auth-screen {
+            display: none; /* Escondido por padrão, ativado pelo JS */
+            position: absolute; /* Para sobrepor a tela inicial */
+            width: 100%;
+            max-width: 450px; 
+            background-color: var(--dark-gray-screen); 
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        .auth-screen.active {
+            display: block;
+        }
+
+        /* Sidebar Azul Escuro Lateral (Vendedor) */
+        .auth-screen .sidebar {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px; 
+            height: 100%;
+            background-color: #34495e; 
+            border-left: 2px solid #293a4a;
+        }
+        
+        /* Cabeçalho de Navegação */
+        .header {
+            background-color: var(--dark-blue-header); 
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .header .logo-group {
+            display: flex;
+            align-items: center;
+        }
+        .logo-group h2 {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0 10px 0 0;
+        }
+        .logo-group p {
+            font-size: 10px;
+            margin: 0;
+            line-height: 1;
+        }
+        .header span.role {
+            font-size: 16px;
+            font-weight: normal;
+            margin-left: 20px;
+            padding: 5px 10px;
+            background-color: #34495e;
+            border-radius: 5px;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .content-area {
+            padding: 30px 40px;
+            min-height: 300px;
+            position: relative;
+        }
+
+        .form-title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        /* Inputs e Labels */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ccc;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #4f545c;
+            border-radius: 4px;
+            background-color: #3b4047;
+            color: white;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        /* Botões de Ação do Formulário */
+        .action-button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .primary-button {
+            background-color: var(--primary-action-color); 
+            color: white;
+        }
+
+        .primary-button:hover {
+            background-color: #4752c4;
+        }
+
+        .secondary-button {
+            background-color: white;
+            color: var(--primary-action-color);
+        }
+
+        .secondary-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* ------------------------------------------------ */
+        /* Estilos das Modais de Erro */
+        /* ------------------------------------------------ */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); 
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--dark-gray-screen);
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            border-top: 5px solid var(--primary-action-color); 
+            position: relative;
+        }
+
+        .modal-header {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .modal-body {
+            background-color: white; /* Fundo branco do texto de erro na imagem */
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #5865f2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-
-    <main class="container">
-
-        <section class="login-box">
-            
-            <img src="CarConnectlogo.png" alt="Logo CarConnect" class="logo">
-            <h1>CarConnect</h1>
-            <p class="subtitle">カーコネクト</p>
-            
-         
-
-            <form class="login-form">
-                <h2>Vendedor</h2>
-                
-                <div class="form-group">
-                    <label for="nome">Nome</label>
-                    <input type="text" id="nome" name="nome" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="senha">Senha</label>
-                    <input type="password" id="senha" name="senha" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">ENTRAR</button>
-            </form>
-
-            <div class="recovery-link">
-                <a href="#">
-                    <img src="Group 55.png" alt="Ícone de recuperar senha">
-                    Recuperar Senha
-                </a>
-            </div>
-
-        </section>
-
-        <aside class="sidebar">
-            <div class="sidebar-item">
-                <span class="jp-text">安全性</span>
-                <span class="en-text">Segurança</span>
-            </div>
-            <div class="sidebar-item">
-                <span class="jp-text">使いやすさ</span>
-                <span class="en-text">Facilidade</span>
-            </div>
-            <div class="sidebar-item">
-                <span class="jp-text">アクセシビリティ</span>
-                <span class="en-text">Acessibilidade</span>
-            </div>
-        </aside>
-
-    </main>
     
+    <div class="sidebar-right"></div>
+
+    <div id="screen-initial" class="initial-container active">
+        <img src="https://via.placeholder.com/80/ffffff/1a237e?text=Logo" alt="Logo" class="logo-icon"> 
+        
+        <h1 class="logo-title">CarConnect</h1>
+        <p class="logo-subtitle">カーコネクト</p>
+
+        <div class="button-group">
+            <button class="choice-button vendedor" onclick="goToScreen('screen-choice')">Vendedor</button>
+            <button class="choice-button cliente">Cliente</button>
+        </div>
+    </div>
+    
+    <div id="screen-choice" class="auth-screen">
+        <div class="sidebar"></div>
+        <div class="header">
+            <button class="back-button" onclick="goToScreen('screen-initial')">←</button>
+            <div class="logo-group">
+                <h2>CarConnect</h2>
+                <p>カーコネクト</p>
+            </div>
+            <span class="role">Vendedor</span>
+            <div style="width: 20px;"></div> 
+        </div>
+
+        <div class="content-area" style="text-align: center;">
+            <p style="color: white; margin-top: 50px;">Escolha a opção:</p>
+            <button class="action-button primary-button" onclick="goToScreen('screen-login')">Entrar</button>
+            <button class="action-button secondary-button" onclick="goToScreen('screen-register')">Cadastre-se</button>
+        </div>
+    </div>
+
+    <div id="screen-login" class="auth-screen">
+        <div class="sidebar"></div>
+        <div class="header">
+            <button class="back-button" onclick="goToScreen('screen-choice')">←</button>
+            <div class="logo-group">
+                <h2>CarConnect</h2>
+                <p>カーコネクト</p>
+            </div>
+            <span class="role">Vendedor</span>
+            <div style="width: 20px;"></div>
+        </div>
+
+        <div class="content-area">
+            <h3 class="form-title">Vendedor</h3>
+            <form id="form-login">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-senha">Senha</label>
+                    <input type="password" id="login-senha" name="senha" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-id">ID do Vendedor</label>
+                    <input type="text" id="login-id" name="vendedor_id" required>
+                </div>
+
+                <button type="submit" class="action-button primary-button">ENTRAR</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="screen-register" class="auth-screen">
+        <div class="sidebar"></div>
+        <div class="header">
+            <button class="back-button" onclick="goToScreen('screen-choice')">←</button>
+            <div class="logo-group">
+                <h2>CarConnect</h2>
+                <p>カーコネクト</p>
+            </div>
+            <span class="role">Vendedor</span>
+            <div style="width: 20px;"></div>
+        </div>
+
+        <div class="content-area">
+            <h3 class="form-title">Cadastro</h3>
+            <form id="form-register">
+                <div class="form-group">
+                    <label for="register-nome">Nome Completo</label>
+                    <input type="text" id="register-nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">E-mail</label>
+                    <input type="email" id="register-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-fone">Telefone</label>
+                    <input type="tel" id="register-fone" name="telefone" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-senha">Senha</label>
+                    <input type="password" id="register-senha" name="senha" required>
+                </div>
+
+                <button type="submit" class="action-button primary-button">Criar</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="modal-error-login" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('modal-error-login')">&times;</span>
+            <div class="modal-header">Erro de Login</div>
+            <div class="modal-body">
+                Falha ao Acessar o site
+            </div>
+            <button class="modal-button" onclick="closeModal('modal-error-login')">Voltar</button>
+        </div>
+    </div>
+
+    <div id="modal-error-register" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('modal-error-register')">&times;</span>
+            <div class="modal-header">Erro de Cadastro</div>
+            <div class="modal-body">
+                Falha ao tentar se cadastrar no site
+            </div>
+            <button class="modal-button" onclick="closeModal('modal-error-register')">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- FUNÇÕES DE CONTROLE DE TELA E MODAL ---
+
+            /**
+             * Alterna a exibição entre as telas principais (Initial, Choice, Login, Register).
+             */
+            function goToScreen(screenId) {
+                // Esconde a tela inicial de escolha E todas as telas de autenticação
+                document.querySelectorAll('.initial-container').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                document.querySelectorAll('.auth-screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+
+                // Mostra a tela desejada
+                const targetScreen = document.getElementById(screenId);
+                if (targetScreen) {
+                    targetScreen.classList.add('active');
+                }
+            }
+
+            function showModal(modalId, message = '') {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    if (message) {
+                         const modalBody = modal.querySelector('.modal-body');
+                         if (modalBody) {
+                             modalBody.textContent = message;
+                         }
+                    }
+                    modal.style.display = 'flex';
+                }
+            }
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+            
+            // --- LÓGICA DE SUBMISSÃO (INTEGRAÇÃO COM BACKEND) ---
+
+            function handleLogin(event) {
+                event.preventDefault(); 
+                
+                const form = document.getElementById('form-login');
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                console.log('Tentativa de Login:', data);
+
+                // ** AQUI VOCÊ FARÁ A CHAMADA FETCH PARA SEU BACKEND (EX: /vendedor/login) **
+                // Se o servidor retornar sucesso: window.location.href = '/vendedor/dashboard';
+                // Se o servidor retornar falha: showModal('modal-error-login', 'Mensagem de erro do servidor');
+                
+                // Exemplo de Simulação de ERRO:
+                // showModal('modal-error-login'); 
+            }
+
+            function handleRegister(event) {
+                event.preventDefault(); 
+
+                const form = document.getElementById('form-register');
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                console.log('Tentativa de Cadastro:', data);
+
+                // ** AQUI VOCÊ FARÁ A CHAMADA FETCH PARA SEU BACKEND (EX: /vendedor/cadastro) **
+                // Se o servidor retornar sucesso: alert('Cadastro OK!'); goToScreen('screen-login');
+                // Se o servidor retornar falha (ex: e-mail já existe): showModal('modal-error-register', 'E-mail já cadastrado.');
+                
+                // Exemplo de Simulação de ERRO:
+                // showModal('modal-error-register'); 
+            }
+            
+            // --- INICIALIZAÇÃO E LISTENER DE EVENTOS ---
+            
+            // Torna as funções globais (necessário para o 'onclick' no HTML)
+            window.goToScreen = goToScreen;
+            window.closeModal = closeModal;
+            
+            // Adiciona listeners de submissão aos formulários
+            const formLogin = document.getElementById('form-login');
+            const formRegister = document.getElementById('form-register');
+            
+            if (formLogin) {
+                formLogin.addEventListener('submit', handleLogin);
+            }
+            if (formRegister) {
+                formRegister.addEventListener('submit', handleRegister);
+            }
+
+            // Garante que a tela INICIAL seja a primeira a aparecer
+            goToScreen('screen-initial');
+        });
+    </script>
 </body>
 </html>
