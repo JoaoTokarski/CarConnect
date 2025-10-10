@@ -1,70 +1,416 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarConnect - Login do Cliente</title>
-    <link href="style.css" rel="stylesheet">
+    <title>CarConnect - Vendedor</title>
+    <style>
+        /* ------------------------------------------------ */
+        /* CSS Base e Design Geral (Baseado no Dark Theme) */
+        /* ------------------------------------------------ */
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #36393f; /* Cor de fundo da sua tela */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
 
-    <link rel="icon" type="image/png" href="CarConnectlogo.png">
+        /* Container Principal do Formulário/Tela */
+        .auth-screen {
+            display: none; /* Controlado pelo JS */
+            width: 100%;
+            max-width: 450px; /* Largura para o bloco central */
+            background-color: #2f333a; /* Fundo do bloco principal (área cinza da sua tela) */
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+        .auth-screen.active {
+            display: block;
+        }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="loginVendedor.css" rel="stylesheet">
+        /* ------------------------------------------------ */
+        /* Sidebar Azul Escuro (Borda lateral) */
+        /* ------------------------------------------------ */
+        .sidebar {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px; /* Largura da barra lateral */
+            height: 100%;
+            background-color: #34495e; /* Azul Escuro */
+            border-left: 2px solid #293a4a;
+        }
+        
+        /* ------------------------------------------------ */
+        /* Cabeçalho (Logo, Título e Botão Voltar) */
+        /* ------------------------------------------------ */
+        .header {
+            background-color: #293a4a; /* Azul Marinho do Cabeçalho */
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header .logo-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Logotipo (CarConnect) */
+        .logo-group h2 {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0 10px 0 0;
+        }
+        .logo-group p {
+            font-size: 10px;
+            margin: 0;
+            line-height: 1;
+        }
+        
+        .header span.role {
+            font-size: 16px;
+            font-weight: normal;
+            margin-left: 20px;
+            padding: 5px 10px;
+            background-color: #34495e;
+            border-radius: 5px;
+        }
+
+        /* Ícone Voltar (Seta) */
+        .back-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        /* ------------------------------------------------ */
+        /* Área de Conteúdo (Formulários) */
+        /* ------------------------------------------------ */
+        .content-area {
+            padding: 30px 40px;
+            min-height: 300px; /* Altura mínima */
+            position: relative;
+        }
+
+        .form-title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        /* ------------------------------------------------ */
+        /* Componentes de Formulário (Inputs e Botões) */
+        /* ------------------------------------------------ */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ccc;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #4f545c;
+            border-radius: 4px;
+            background-color: #3b4047;
+            color: white;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        /* Botões de Ação */
+        .action-button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        /* Botão Primário (Entrar/Cadastrar) - Azul Claro */
+        .primary-button {
+            background-color: #5865f2; /* Azul dos botões primários */
+            color: white;
+        }
+
+        .primary-button:hover {
+            background-color: #4752c4;
+        }
+
+        /* Botão Secundário (Cadastrar-se/Crie) - Branco */
+        .secondary-button {
+            background-color: white;
+            color: #5865f2;
+        }
+
+        .secondary-button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* ------------------------------------------------ */
+        /* Estilos das Modais de Erro */
+        /* ------------------------------------------------ */
+        .modal {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Fundo escuro */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #2f333a;
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            border-top: 5px solid #5865f2; /* Cor de destaque para o erro */
+            position: relative;
+        }
+
+        .modal-header {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .modal-body {
+            background-color: white; /* Fundo branco do texto de erro na imagem */
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #5865f2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+    </style>
 </head>
 <body>
 
-    <main class="container">
+    <div id="screen-choice" class="auth-screen active">
+        <div class="sidebar"></div>
+        <div class="header">
+            <button class="back-button" onclick="goToScreen('screen-initial')">←</button>
+            <div class="logo-group">
+                <h2>CarConnect</h2>
+                <p>カーコネクト</p>
+            </div>
+            <span class="role">Vendedor</span>
+            <div style="width: 20px;"></div> </div>
 
-        <section class="login-box">
-            
-            <img src="CarConnectlogo.png" alt="Logo CarConnect" class="logo">
-            <h1>CarConnect</h1>
-            <p class="subtitle">カーコネクト</p>
-            
-         
+        <div class="content-area" style="text-align: center;">
+            <p style="color: white; margin-top: 50px;">Escolha a opção:</p>
+            <button class="action-button primary-button" onclick="goToScreen('screen-login')">Entrar</button>
+            <button class="action-button secondary-button" onclick="goToScreen('screen-register')">Cadastre-se</button>
+        </div>
+    </div>
 
-            <form class="login-form">
-                <h2>Vendedor</h2>
-                
+    <div id="screen-login" class="auth-screen">
+        <div class="sidebar"></div>
+        <div class="header">
+            <button class="back-button" onclick="goToScreen('screen-choice')">←</button>
+            <div class="logo-group">
+                <h2>CarConnect</h2>
+                <p>カーコネクト</p>
+            </div>
+            <span class="role">Vendedor</span>
+            <div style="width: 20px;"></div>
+        </div>
+
+        <div class="content-area">
+            <h3 class="form-title">Vendedor</h3>
+            <form id="form-login" onsubmit="event.preventDefault(); handleLogin();">
                 <div class="form-group">
-                    <label for="nome">Nome</label>
-                    <input type="text" id="nome" name="nome" required>
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-senha">Senha</label>
+                    <input type="password" id="login-senha" name="senha" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-id">ID do Vendedor</label>
+                    <input type="text" id="login-id" name="vendedor_id" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="senha">Senha</label>
-                    <input type="password" id="senha" name="senha" required>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">ENTRAR</button>
+                <button type="submit" class="action-button primary-button">ENTRAR</button>
             </form>
+        </div>
+    </div>
 
-            <div class="recovery-link">
-                <a href="#">
-                    <img src="Group 55.png" alt="Ícone de recuperar senha">
-                    Recuperar Senha
-                </a>
+    <div id="screen-register" class="auth-screen">
+        <div class="sidebar"></div>
+        <div class="header">
+            <button class="back-button" onclick="goToScreen('screen-choice')">←</button>
+            <div class="logo-group">
+                <h2>CarConnect</h2>
+                <p>カーコネクト</p>
             </div>
+            <span class="role">Vendedor</span>
+            <div style="width: 20px;"></div>
+        </div>
 
-        </section>
+        <div class="content-area">
+            <h3 class="form-title">Cadastro</h3>
+            <form id="form-register" onsubmit="event.preventDefault(); handleRegister();">
+                <div class="form-group">
+                    <label for="register-nome">Nome Completo</label>
+                    <input type="text" id="register-nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">E-mail</label>
+                    <input type="email" id="register-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-fone">Telefone</label>
+                    <input type="tel" id="register-fone" name="telefone" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-senha">Senha</label>
+                    <input type="password" id="register-senha" name="senha" required>
+                </div>
 
-        <aside class="sidebar">
-            <div class="sidebar-item">
-                <span class="jp-text">安全性</span>
-                <span class="en-text">Segurança</span>
-            </div>
-            <div class="sidebar-item">
-                <span class="jp-text">使いやすさ</span>
-                <span class="en-text">Facilidade</span>
-            </div>
-            <div class="sidebar-item">
-                <span class="jp-text">アクセシビリティ</span>
-                <span class="en-text">Acessibilidade</span>
-            </div>
-        </aside>
-
-    </main>
+                <button type="submit" class="action-button primary-button">Criar</button>
+            </form>
+        </div>
+    </div>
     
+    <div id="modal-error-login" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('modal-error-login')">&times;</span>
+            <div class="modal-header">Erro de Login</div>
+            <div class="modal-body">
+                Falha ao Acessar o site
+            </div>
+            <button class="modal-button" onclick="closeModal('modal-error-login')">Voltar</button>
+        </div>
+    </div>
+
+    <div id="modal-error-register" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('modal-error-register')">&times;</span>
+            <div class="modal-header">Erro de Cadastro</div>
+            <div class="modal-body">
+                Falha ao tentar se cadastrar no site
+            </div>
+            <button class="modal-button" onclick="closeModal('modal-error-register')">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        // Função principal para gerenciar as transições de tela
+        function goToScreen(screenId) {
+            // Esconde todas as telas
+            document.querySelectorAll('.auth-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            // Mostra a tela desejada
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            }
+        }
+
+        // Funções para Modais de Erro
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Lógica de Submissão (Simulada - Você deve conectar isso ao seu Backend)
+        
+        function handleLogin() {
+            // **IMPORTANTE**: Aqui você enviaria os dados para o seu servidor.
+            // Exemplo: fetch('/api/vendedor/login', { method: 'POST', body: new FormData(document.getElementById('form-login')) })
+            
+            // SIMULAÇÃO: Se o login falhar, mostre o erro.
+            // No seu código real, isso seria ativado se o servidor retornasse um erro.
+            console.log('Tentativa de Login...');
+            // showModal('modal-error-login'); // Descomente para testar o erro
+            
+            // SIMULAÇÃO: Se o login for bem-sucedido, redirecione (ex: '/vendedor/dashboard')
+            // window.location.href = '/vendedor/dashboard'; 
+        }
+
+        function handleRegister() {
+            // **IMPORTANTE**: Aqui você enviaria os dados para o seu servidor.
+            // Exemplo: fetch('/api/vendedor/register', { method: 'POST', body: new FormData(document.getElementById('form-register')) })
+
+            // SIMULAÇÃO: Se o cadastro falhar, mostre o erro.
+            console.log('Tentativa de Cadastro...');
+            // showModal('modal-error-register'); // Descomente para testar o erro
+
+            // SIMULAÇÃO: Se o cadastro for bem-sucedido, redirecione ou mostre uma mensagem.
+            // window.location.href = '/vendedor/welcome'; 
+        }
+        
+        // Garante que a primeira tela (escolha) seja a ativa ao carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            goToScreen('screen-choice');
+        });
+    </script>
 </body>
 </html>
