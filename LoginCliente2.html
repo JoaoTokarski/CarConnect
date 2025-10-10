@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarConnect - Área do Cliente</title>
+    <title>CarConnect - Área do Cliente (Corrigido)</title>
     <style>
         /* Estilos básicos para simular o design e esconder as telas */
         body {
@@ -27,11 +27,9 @@
             margin: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Oculta as telas por padrão. O JS mostrará a tela inicial. */
-        .screen {
-            display: none;
+            /* Importante: oculta todas as telas por padrão */
+            display: none; 
+            position: relative; /* Para posicionar a seta */
         }
 
         /* Estilos para os componentes internos */
@@ -51,6 +49,7 @@
             border-radius: 4px;
             box-sizing: border-box;
             background-color: #f0f4c3; /* Cor clara para input */
+            color: #333;
         }
 
         button {
@@ -74,11 +73,6 @@
             color: white;
         }
 
-        .btn-back {
-            background-color: #f44336; /* Botão vermelho para voltar */
-            color: white;
-        }
-
         .logo {
             text-align: center;
             margin-bottom: 15px;
@@ -87,18 +81,19 @@
             color: #e3f2fd;
         }
 
-        /* Estilo para a seta de voltar, simulando o ícone */
+        /* Estilo para a seta de voltar */
         .back-arrow {
             font-size: 1.5em;
             cursor: pointer;
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 15px;
+            left: 15px;
+            color: white;
+            z-index: 10;
         }
 
         .screen-header {
-            position: relative;
-            padding-top: 20px; /* Espaço para a seta */
+            padding-top: 30px; /* Espaço para a seta */
             margin-bottom: 15px;
             border-bottom: 1px solid #3f51b5;
         }
@@ -117,6 +112,7 @@
             z-index: 1000;
             display: none; /* Escondido por padrão */
             text-align: center;
+            width: 250px;
         }
 
         .error-modal button {
@@ -139,8 +135,8 @@
     </div>
 
     <div id="loginScreen" class="screen">
+        <span class="back-arrow" onclick="navigateTo('choiceScreen')">←</span>
         <div class="screen-header">
-            <span class="back-arrow" onclick="navigateTo('choiceScreen')">←</span>
             <div class="logo">CarConnect Cliente</div>
         </div>
         <h2>Tela de Login Cliente</h2>
@@ -149,12 +145,12 @@
         <label for="loginSenha">Senha:</label>
         <input type="password" id="loginSenha" placeholder="********">
         <button class="btn-primary" onclick="handleLogin()">ENTRAR</button>
-        <a href="#" style="display: block; text-align: center; margin-top: 10px; color: #bbdefb;" onclick="navigateTo('cadastroScreen')">Criar Conta</a>
+        <a href="#" style="display: block; text-align: center; margin-top: 10px; color: #bbdefb; font-size: 0.9em;" onclick="event.preventDefault(); navigateTo('cadastroScreen')">Criar Conta</a>
     </div>
 
     <div id="cadastroScreen" class="screen">
+        <span class="back-arrow" onclick="navigateTo('choiceScreen')">←</span>
         <div class="screen-header">
-            <span class="back-arrow" onclick="navigateTo('choiceScreen')">←</span>
             <div class="logo">CarConnect Cliente</div>
         </div>
         <h2>Tela de Cadastro Cliente</h2>
@@ -182,7 +178,8 @@
     </div>
 
     <script>
-        // Função principal para navegar entre as telas
+        // Função principal para navegar entre as telas.
+        // É responsável pelo direcionamento.
         function navigateTo(screenId) {
             // 1. Esconde todas as telas
             const screens = document.querySelectorAll('.screen');
@@ -197,36 +194,52 @@
             }
         }
 
-        // Funções para simular a lógica de login e cadastro
+        // Simula o processo de Login
         function handleLogin() {
-            // Lógica de simulação: se o campo de email estiver vazio, mostra o erro
             const email = document.getElementById('loginEmail').value;
-            if (email.trim() === '') {
-                // Simula a Falha no Login
-                showModal('errorLoginModal');
+            const senha = document.getElementById('loginSenha').value;
+
+            // Se algum campo estiver vazio, simula o erro de login
+            if (email.trim() === '' || senha.trim() === '') {
+                showModal('errorLoginModal', 'Falha ao Acessar o site');
             } else {
-                // Em um cenário real, você faria uma requisição para o servidor aqui.
-                alert('Login (Simulado) Bem-sucedido! Redirecionando para a área logada...');
-                // Você pode adicionar um redirecionamento real aqui, ex: window.location.href = 'dashboard.html';
+                // Simulação de Sucesso: Limpa os campos e dá um alerta
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginSenha').value = '';
+                alert('Login (Simulado) Bem-sucedido! Redirecionando...');
+                // Em um projeto real, aqui você redirecionaria para o dashboard.
             }
         }
 
+        // Simula o processo de Cadastro
         function handleCadastro() {
-            // Lógica de simulação: se o campo de nome estiver vazio, mostra o erro
             const nome = document.getElementById('nomeCompleto').value;
-            if (nome.trim() === '') {
-                // Simula a Falha no Cadastro
-                showModal('errorCadastroModal');
+            const email = document.getElementById('cadastroEmail').value;
+            const senha = document.getElementById('cadastroSenha').value;
+
+            // Se algum campo estiver vazio, simula o erro de cadastro
+            if (nome.trim() === '' || email.trim() === '' || senha.trim() === '') {
+                showModal('errorCadastroModal', 'Falha ao se cadastrar no site');
             } else {
-                // Em um cenário real, você faria uma requisição para o servidor aqui.
-                alert('Cadastro (Simulado) Bem-sucedido! Redirecionando para a tela de Login.');
-                navigateTo('loginScreen'); // Volta para o login após o sucesso simulado
+                // Simulação de Sucesso:
+                alert('Cadastro (Simulado) Bem-sucedido! Volte para a tela de Login para entrar.');
+                // Limpa os campos após o cadastro
+                document.getElementById('nomeCompleto').value = '';
+                document.getElementById('dataNascimento').value = '';
+                document.getElementById('cadastroEmail').value = '';
+                document.getElementById('cadastroSenha').value = '';
+                
+                // Redirecionamento correto após o cadastro bem-sucedido: Volta para o LOGIN
+                navigateTo('loginScreen'); 
             }
         }
 
         // Funções para manipular os modais de erro
-        function showModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
+        function showModal(modalId, message) {
+            const modal = document.getElementById(modalId);
+            const p = modal.querySelector('p');
+            if (p) p.textContent = message;
+            modal.style.display = 'block';
         }
 
         function closeModal(modalId) {
